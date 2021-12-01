@@ -22,7 +22,7 @@ public class UserService {
     @Autowired
     private UserTypeRepository userTypeRepository;
 
-
+    /// ????
     public User loadUserByUsername(String email){
         User user = new User();
 
@@ -50,12 +50,5 @@ public class UserService {
         return userRepository.findAll(spec);
     }
 
-    public List<User> getAll(){
-        return userRepository.findAll();
-    }
-
-    public List<UserType> getA(){
-        return userTypeRepository.findAll();
-    }
 
 }

@@ -2,22 +2,42 @@ package fastfoodbackend.fastfoodbackend.Security.Models;
 
 public class TokenRes {
     private final String jwt;
-    private String clientEmail;
+    private String userEmail;
+    private String userType;
+    private Integer companyId;
 
-    public TokenRes(String jwt, String clientEmail) {
+    public TokenRes(String jwt, String userEmail, String userType, Integer companyId) {
         this.jwt = jwt;
-        this.clientEmail = clientEmail;
+        this.userEmail = userEmail;
+        this.userType = userType;
+        this.companyId = companyId;
     }
 
     public String getJwt() {
         return jwt;
     }
 
-    public String getClientEmail() {
-        return clientEmail;
+    public String getUserEmail() {
+        return userEmail;
     }
 
-    public void setClientEmail(String clientEmail) {
-        this.clientEmail = clientEmail;
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
+
+    public Integer getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Integer companyId) {
+        this.companyId = companyId;
     }
 }

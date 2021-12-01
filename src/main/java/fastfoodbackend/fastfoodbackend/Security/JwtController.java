@@ -37,12 +37,13 @@ class jwtController {
 
     @Autowired
     private CryptoJS cryptoJS;
-    // api for users authentication
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> CreateAuthenticateToken(@RequestBody TokenReq tokenReq,
                                                      HttpServletRequest httpServletRequest) throws Exception {
         String jwt = "";
         String userEmail  = "";
+        String userType = "";
+        Integer companyId = null;
         List<User> users;
         try {
 
@@ -53,13 +54,11 @@ class jwtController {
             users = userService.getUserBySpec(specification);
             if (users.get(0).getEmail() != null) {
                 // TODO:// ovde treba da se dekriptira password
-                //System.out.println("password: " + authenticationRequest.getPasword());
 
                 String decoded = cryptoJS.decryptText(tokenReq.getPasword());
 
                 System.out.println("decoded: " + decoded);
-//                if (passwordEncoder.matches(decoded, users.get(0).getPassword())) {
-                if (true) {
+                if (passwordEncoder.matches(decoded, users.get(0).getPassword())) {
                     List<GrantedAuthority> authorities = new ArrayList<>(); // this should have more roles
                     GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("ROLE_USER");
                     authorities.add(grantedAuthority);
@@ -67,16 +66,16 @@ class jwtController {
                     jwt = jwtTokenUtil.generateToken(userDetails);
                     System.out.println("jwt: " + jwt);
                     userEmail = users.get(0).getEmail();
+                    userType = users.get(0).getIdUserType().getName();
+                    companyId = users.get(0).getCompanyId();
                 } else {
-                    //throw new BadCredentialsException("Incorrect username or password");
                     jwt = "";
                 }
             }
         } catch (BadCredentialsException e) {
             jwt = "";
-//            logErrorService.LogErrorSave(new LogError(httpServletRequest.getHeader("Application"),"","","","","","",""));
         }
-        return ResponseEntity.ok(new TokenRes(jwt, userEmail ));
+        return ResponseEntity.ok(new TokenRes(jwt, userEmail, userType, companyId));
     }
 
     @ResponseStatus(value = HttpStatus.OK)

@@ -19,11 +19,12 @@ public class User {
     private String Password;
     private Date DateInsert;
     private String Email;
+    private Integer CompanyId;
 
     public User() {
     }
 
-    public User(Integer idUser, UserType idUserType, String name, String surname, String password, Date dateInsert, String email) {
+    public User(Integer idUser, UserType idUserType, String name, String surname, String password, Date dateInsert, String email, Integer companyId) {
         IdUser = idUser;
         IdUserType = idUserType;
         Name = name;
@@ -31,6 +32,7 @@ public class User {
         Password = password;
         DateInsert = dateInsert;
         Email = email;
+        CompanyId = companyId;
     }
 
     public Integer getIdUser() {
@@ -89,5 +91,7 @@ public class User {
         DateInsert = dateInsert;
     }
 
+    public Integer getCompanyId() { return CompanyId; }
 
+    public void setCompanyId(Integer companyId) { CompanyId = companyId; }
 }
