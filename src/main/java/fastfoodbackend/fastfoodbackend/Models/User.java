@@ -12,7 +12,7 @@ public class User {
     private Integer IdUser;
 
     @ManyToOne
-    @JoinColumn(name="IdUserType", nullable=false)
+    @JoinColumn(name="IdUserType",  referencedColumnName = "IdUserType")
     private UserType IdUserType;
     private String Name;
     private String Surname;
@@ -24,8 +24,7 @@ public class User {
     public User() {
     }
 
-    public User(Integer idUser, UserType idUserType, String name, String surname, String password, Date dateInsert, String email, Integer companyId) {
-        IdUser = idUser;
+    public User(UserType idUserType, String name, String surname, String password, Date dateInsert, String email, Integer companyId) {
         IdUserType = idUserType;
         Name = name;
         Surname = surname;
@@ -59,14 +58,6 @@ public class User {
         Name = name;
     }
 
-    public String getEmail() {
-        return Email;
-    }
-
-    public void setEmail(String email) {
-        Email = email;
-    }
-
     public String getSurname() {
         return Surname;
     }
@@ -91,7 +82,19 @@ public class User {
         DateInsert = dateInsert;
     }
 
-    public Integer getCompanyId() { return CompanyId; }
+    public String getEmail() {
+        return Email;
+    }
 
-    public void setCompanyId(Integer companyId) { CompanyId = companyId; }
+    public void setEmail(String email) {
+        Email = email;
+    }
+
+    public Integer getCompanyId() {
+        return CompanyId;
+    }
+
+    public void setCompanyId(Integer companyId) {
+        CompanyId = companyId;
+    }
 }

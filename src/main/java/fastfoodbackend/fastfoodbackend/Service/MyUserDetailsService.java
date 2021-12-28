@@ -1,4 +1,4 @@
-package fastfoodbackend.fastfoodbackend.Security.Config;
+package fastfoodbackend.fastfoodbackend.Service;
 
 import fastfoodbackend.fastfoodbackend.Models.User;
 import fastfoodbackend.fastfoodbackend.Service.UserService;

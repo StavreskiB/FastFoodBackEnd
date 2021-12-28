@@ -1,4 +1,4 @@
-package fastfoodbackend.fastfoodbackend.Security.Config;
+package fastfoodbackend.fastfoodbackend.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
-public class JwtUtil {
+public class TokenService {
     private String SECRET_KEY = "unagi";
 
     public String extractUsername(String token) {

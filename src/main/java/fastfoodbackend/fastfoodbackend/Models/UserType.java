@@ -12,7 +12,8 @@ public class UserType {
     public UserType() {
     }
 
-    public UserType(String name) {
+    public UserType(Integer idUserType, String name) {
+        IdUserType = idUserType;
         Name = name;
     }
 

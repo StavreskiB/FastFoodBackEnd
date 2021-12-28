@@ -7,14 +7,14 @@ import javax.persistence.*;
 public class OrderType {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer IdOrderType;
     private String Name;
 
     public OrderType() {
     }
 
-    public OrderType(String name) {
+    public OrderType(Integer idOrderType, String name) {
+        IdOrderType = idOrderType;
         Name = name;
     }
 

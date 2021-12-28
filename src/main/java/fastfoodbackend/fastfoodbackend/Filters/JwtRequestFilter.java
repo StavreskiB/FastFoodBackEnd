@@ -1,7 +1,7 @@
-package fastfoodbackend.fastfoodbackend.Security.Filters;
+package fastfoodbackend.fastfoodbackend.Filters;
 
-import fastfoodbackend.fastfoodbackend.Security.Config.JwtUtil;
-import fastfoodbackend.fastfoodbackend.Security.Config.MyUserDetailsService;
+import fastfoodbackend.fastfoodbackend.Service.TokenService;
+import fastfoodbackend.fastfoodbackend.Service.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +22,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private MyUserDetailsService userDetailsService;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private TokenService tokenService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -36,13 +36,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 jwt = authorizationHeader.substring(7);
                 try {
-                    boolean flag = jwtUtil.isTokenExpired(jwt);
+                    boolean flag = tokenService.isTokenExpired(jwt);
                     System.out.println("request: " + request);
                     System.out.println("flagError: " + flag);
 
                     if (flag) {
                         System.out.println("flag = true : " + flag);
-                        username = jwtUtil.extractUsername(jwt);
+                        username = tokenService.extractUsername(jwt);
                     }
                 }catch (Exception exception){ System.out.println("exception error: "); }
             }
@@ -52,7 +52,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 System.out.println("generate token: ");
 
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-                if (jwtUtil.validateToken(jwt, userDetails)) {
+                if (tokenService.validateToken(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());
                     usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

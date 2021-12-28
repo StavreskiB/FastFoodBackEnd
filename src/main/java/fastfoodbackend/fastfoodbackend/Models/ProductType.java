@@ -7,13 +7,13 @@ import javax.persistence.*;
 public class ProductType {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer IdProductType;
     private String Name;
 
     public ProductType() {}
 
-    public ProductType(String name) {
+    public ProductType(Integer idProductType, String name) {
+        IdProductType = idProductType;
         Name = name;
     }
 

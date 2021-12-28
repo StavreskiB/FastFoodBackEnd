@@ -1,6 +1,5 @@
-package fastfoodbackend.fastfoodbackend.Security;
+package fastfoodbackend.fastfoodbackend.Service;
 
-import fastfoodbackend.fastfoodbackend.Security.Config.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +15,10 @@ import java.util.Arrays;
 import java.util.Base64;
 
 @Service
-public class CryptoJS {
+public class CryptoService {
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private TokenService tokenService;
 
     public static String secret = "unagi";
 
@@ -131,8 +130,8 @@ public class CryptoJS {
         String jwt = null;
         if (request.getHeader("Authorization") != null && request.getHeader("Authorization").startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
-            username = jwtUtil.extractUsername(jwt);
-            System.out.println("exp. " + jwtUtil.extractExpiration(jwt));
+            username = tokenService.extractUsername(jwt);
+            System.out.println("exp. " + tokenService.extractExpiration(jwt));
         }
         return username;
     }

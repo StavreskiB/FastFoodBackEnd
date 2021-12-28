@@ -1,4 +1,4 @@
-package fastfoodbackend.fastfoodbackend.Security.Models;
+package fastfoodbackend.fastfoodbackend.Models;
 
 public class TokenReq {
     private String email;

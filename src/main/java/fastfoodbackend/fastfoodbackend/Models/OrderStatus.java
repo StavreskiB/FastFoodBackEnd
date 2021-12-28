@@ -5,25 +5,24 @@ import javax.persistence.*;
 @Entity
 @Table(name = "orderstatus")
 public class OrderStatus {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer OrderStatus;
+    private Integer IdOrderStatus;
     private String Name;
 
     public OrderStatus() {
     }
 
-    public OrderStatus(String name) {
+    public OrderStatus(Integer idOrderStatus, String name) {
+        IdOrderStatus = idOrderStatus;
         Name = name;
     }
 
-    public Integer getOrderStatus() {
-        return OrderStatus;
+    public Integer getIdOrderStatus() {
+        return IdOrderStatus;
     }
 
-    public void setOrderStatus(Integer orderStatus) {
-        OrderStatus = orderStatus;
+    public void setIdOrderStatus(Integer idOrderStatus) {
+        IdOrderStatus = idOrderStatus;
     }
 
     public String getName() {

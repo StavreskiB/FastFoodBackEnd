@@ -1,8 +1,8 @@
-package fastfoodbackend.fastfoodbackend.Security.Config;
+package fastfoodbackend.fastfoodbackend.Configuration;
 
-import fastfoodbackend.fastfoodbackend.Security.Filters.JwtRequestFilter;
+import fastfoodbackend.fastfoodbackend.Service.MyUserDetailsService;
+import fastfoodbackend.fastfoodbackend.Filters.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;

@@ -15,17 +15,18 @@ public class Invoice {
     private Double Price;
     private Date DateInsert;
     private Date Deadline;
-    private boolean Status;
-
+    private String Status;
+    private Integer CompanyId;
     public Invoice(){}
 
-    public Invoice(String name, String companyName, Double price, Date dateInsert, Date deadline, boolean status) {
+    public Invoice(String name, String companyName, Double price, Date dateInsert, Date deadline, String status, Integer companyId) {
         Name = name;
         CompanyName = companyName;
         Price = price;
         DateInsert = dateInsert;
         Deadline = deadline;
         Status = status;
+        CompanyId = companyId;
     }
 
     public Integer getIdInvoice() {
@@ -76,11 +77,19 @@ public class Invoice {
         Deadline = deadline;
     }
 
-    public boolean isStatus() {
+    public String getStatus() {
         return Status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(String status) {
         Status = status;
+    }
+
+    public Integer getCompanyId() {
+        return CompanyId;
+    }
+
+    public void setCompanyId(Integer companyId) {
+        CompanyId = companyId;
     }
 }

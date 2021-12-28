@@ -14,21 +14,23 @@ public class Product {
     @JoinColumn(name="IdProductType", nullable=false)
     private ProductType IdProductType;
     private String Name;
+    private Double Quantity;
     private Double Price;
     private Date DateInsert;
-    @ManyToOne
-    @JoinColumn(name="IdNorms", nullable=false)
-    private Norms IdNorms;
+    private Integer CompanyId;
+    private Integer Status;
 
     public Product() {
     }
 
-    public Product(ProductType idProductType, String name, Double price, Date dateInsert, Norms idNorms) {
+    public Product(ProductType idProductType, String name, Double quantity, Double price, Date dateInsert, Integer companyId, Integer status) {
         IdProductType = idProductType;
         Name = name;
+        Quantity = quantity;
         Price = price;
         DateInsert = dateInsert;
-        IdNorms = idNorms;
+        CompanyId = companyId;
+        Status = status;
     }
 
     public Integer getIdProduct() {
@@ -55,6 +57,14 @@ public class Product {
         Name = name;
     }
 
+    public Double getQuantity() {
+        return Quantity;
+    }
+
+    public void setQuantity(Double quantity) {
+        Quantity = quantity;
+    }
+
     public Double getPrice() {
         return Price;
     }
@@ -71,11 +81,19 @@ public class Product {
         DateInsert = dateInsert;
     }
 
-    public Norms getIdNorms() {
-        return IdNorms;
+    public Integer getCompanyId() {
+        return CompanyId;
     }
 
-    public void setIdNorms(Norms idNorms) {
-        IdNorms = idNorms;
+    public void setCompanyId(Integer companyId) {
+        CompanyId = companyId;
+    }
+
+    public Integer getStatus() {
+        return Status;
+    }
+
+    public void setStatus(Integer status) {
+        Status = status;
     }
 }

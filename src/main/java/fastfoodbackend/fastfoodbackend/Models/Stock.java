@@ -14,20 +14,21 @@ public class Stock {
     @ManyToOne
     @JoinColumn(name="IdProduct", nullable=false)
     private Product IdProduct;
-
-    @ManyToOne
-    @JoinColumn(name="IdInvoice", nullable=false)
-    private Invoice IdInvoice;
+    private Integer IdInvoice;
     private Double Quantity;
     private Date DateInsert;
+    private Integer CompanyId;
+    private Integer Status;
 
     public Stock(){}
 
-    public Stock(Product idProduct, Invoice idInvoice, Double quantity, Date dateInsert) {
+    public Stock(Product idProduct, Integer idInvoice, Double quantity, Date dateInsert, Integer companyId, Integer status) {
         IdProduct = idProduct;
         IdInvoice = idInvoice;
         Quantity = quantity;
         DateInsert = dateInsert;
+        CompanyId = companyId;
+        Status = status;
     }
 
     public Integer getIdStock() {
@@ -46,11 +47,11 @@ public class Stock {
         IdProduct = idProduct;
     }
 
-    public Invoice getIdInvoice() {
+    public Integer getIdInvoice() {
         return IdInvoice;
     }
 
-    public void setIdInvoice(Invoice idInvoice) {
+    public void setIdInvoice(Integer idInvoice) {
         IdInvoice = idInvoice;
     }
 
@@ -68,5 +69,21 @@ public class Stock {
 
     public void setDateInsert(Date dateInsert) {
         DateInsert = dateInsert;
+    }
+
+    public Integer getCompanyId() {
+        return CompanyId;
+    }
+
+    public void setCompanyId(Integer companyId) {
+        CompanyId = companyId;
+    }
+
+    public Integer getStatus() {
+        return Status;
+    }
+
+    public void setStatus(Integer status) {
+        Status = status;
     }
 }
