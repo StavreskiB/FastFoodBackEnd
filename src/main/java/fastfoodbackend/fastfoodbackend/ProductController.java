@@ -2,6 +2,7 @@ package fastfoodbackend.fastfoodbackend;
 
 import fastfoodbackend.fastfoodbackend.Models.*;
 import fastfoodbackend.fastfoodbackend.Service.ProductService;
+import fastfoodbackend.fastfoodbackend.Service.SettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,8 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private SettingsService settingsService;
 
     @ResponseStatus(value = HttpStatus.OK)
     @RequestMapping(value="/getAllProductType", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
@@ -91,6 +94,24 @@ public class ProductController {
     }
 
     @ResponseStatus(value = HttpStatus.OK)
+    @RequestMapping(value="/getAllProductForSell", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public List<Product> getAllProductForSell(@RequestHeader (value="companyId") String CompanyId, HttpServletRequest httpServletRequest) throws Exception{
+
+        Specification <Product> specification;
+        List<Product> productkList = null;
+
+        try {
+            specification = productService.getAllProductForSell(Integer.valueOf(CompanyId));
+            productkList  = productService.getAllProductForSell(specification);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return productkList ;
+    }
+
+
+    @ResponseStatus(value = HttpStatus.OK)
     @RequestMapping(value="/getAllProductByCompanyId", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public List<Product> getAllProductByCompanyId(@RequestHeader (value="companyId") String CompanyId, HttpServletRequest httpServletRequest) throws Exception{
 
@@ -141,6 +162,41 @@ public class ProductController {
 
         return stockList.stream().filter(o -> o.getIdProduct().getPrice() != null || o.getIdProduct().getQuantity() != null).collect(Collectors.toList());
     }
+
+    @ResponseStatus(value = HttpStatus.OK)
+    @RequestMapping(value="/getStockByCompanyIdAndType", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public List<Stock> getStockByCompanyIdAndType(@RequestHeader (value="companyId") String CompanyId, HttpServletRequest httpServletRequest) throws Exception{
+
+        Specification <Stock> specification;
+        List<Stock> stockList = null;
+
+        try {
+            specification = productService.getAllStockBySpec(Integer.valueOf(CompanyId));
+            stockList = productService.getAllStock(specification);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return stockList.stream().filter(o -> o.getIdProduct().getIdProductType().getIdProductType().equals(1)).collect(Collectors.toList());
+    }
+
+    @ResponseStatus(value = HttpStatus.OK)
+    @RequestMapping(value="/getProductNorms", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public List<Stock> getProductNorms(@RequestHeader (value="companyId") String CompanyId, HttpServletRequest httpServletRequest) throws Exception{
+
+        Specification <Stock> specification;
+        List<Stock> stockList = null;
+
+        try {
+            specification = productService.getAllStockBySpec(Integer.valueOf(CompanyId));
+            stockList = productService.getAllStock(specification);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return stockList.stream().filter(o -> o.getIdProduct().getIdProductType().getIdProductType().equals(2)).collect(Collectors.toList());
+    }
+
 
     @ResponseStatus(value = HttpStatus.OK)
     @RequestMapping(value="/getProductDataById", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
@@ -275,10 +331,7 @@ public class ProductController {
 
         try {
 
-//            idproduct glaven
-//                    productn normativ
-
-            productSpecification = productService.getProductById(Integer.valueOf(idProduct));
+            productSpecification = productService.getProductById(Integer.valueOf(idProductN));
             productList = productService.getAllProduct(productSpecification);
 
             norms.setCompanyId(Integer.valueOf(companyId));
@@ -307,7 +360,7 @@ public class ProductController {
         List<Norms> normsList = null;
         
         try {
-            normsSpecification = productService.getNormsByProductId(Integer.valueOf(idProduct));
+            normsSpecification = productService.getNormsByProductIdN(Integer.valueOf(idProduct));
             normsList = productService.getNormsBySpec(normsSpecification);
 
         } catch (Exception e){
@@ -350,7 +403,6 @@ public class ProductController {
 
             normsList.get(0).setQuantity(Double.valueOf(quantity));
 
-
             productService.saveNewNorms(normsList.get(0));
         } catch (Exception e){
             e.printStackTrace();
@@ -358,6 +410,33 @@ public class ProductController {
 
         return normsList;
     }
+
+
+    @ResponseStatus(value = HttpStatus.OK)
+    @RequestMapping(value="/getLimitProduct", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public List<Stock> getLimitProduct(@RequestHeader (value="companyId") String companyId, HttpServletRequest httpServletRequest) throws Exception{
+
+        Specification<Stock> stockSpec;
+        List<Stock> stockList = null;
+        Specification<Settings> settingsSpec;
+        List<Settings> settList = null;
+
+        try {
+            settingsSpec = settingsService.getSettingsByCompanyId(Integer.valueOf(companyId));
+            settList = settingsService.getInvItemBySpec(settingsSpec);
+
+            stockSpec = productService.getStockLimit(Integer.valueOf(companyId), Double.valueOf(settList.get(0).getLimitPiece()));
+            stockList = productService.getAllStock(stockSpec);
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return stockList;
+    }
+
+
+
 }
 
 

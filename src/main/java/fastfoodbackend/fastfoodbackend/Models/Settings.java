@@ -12,16 +12,16 @@ public class Settings {
     private String FirstShiftStart;
     private String SecondShiftStart;
     private Integer LimitPiece;
-    private Integer LimitGr;
+    private Integer LimitDays;
 
     public Settings(){}
 
-    public Settings(Integer companyId, String firstShiftStart, String secondShiftStart, Integer limitPiece, Integer limitGr) {
+    public Settings(Integer companyId, String firstShiftStart, String secondShiftStart, Integer limitPiece, Integer limitDays) {
         CompanyId = companyId;
         FirstShiftStart = firstShiftStart;
         SecondShiftStart = secondShiftStart;
         LimitPiece = limitPiece;
-        LimitGr = limitGr;
+        LimitDays = limitDays;
     }
 
     public Integer getIdSettings() {
@@ -64,12 +64,12 @@ public class Settings {
         LimitPiece = limitPiece;
     }
 
-    public Integer getLimitGr() {
-        return LimitGr;
+    public Integer getLimitDays() {
+        return LimitDays;
     }
 
-    public void setLimitGr(Integer limitGr) {
-        LimitGr = limitGr;
+    public void setLimitDays(Integer limitDays) {
+        LimitDays = limitDays;
     }
 }
 

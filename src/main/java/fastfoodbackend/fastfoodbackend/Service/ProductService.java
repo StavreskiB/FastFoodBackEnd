@@ -1,13 +1,7 @@
 package fastfoodbackend.fastfoodbackend.Service;
 
-import fastfoodbackend.fastfoodbackend.Models.Norms;
-import fastfoodbackend.fastfoodbackend.Models.Product;
-import fastfoodbackend.fastfoodbackend.Models.ProductType;
-import fastfoodbackend.fastfoodbackend.Models.Stock;
-import fastfoodbackend.fastfoodbackend.Repository.NormRepository;
-import fastfoodbackend.fastfoodbackend.Repository.ProductRepository;
-import fastfoodbackend.fastfoodbackend.Repository.ProductTypeRepository;
-import fastfoodbackend.fastfoodbackend.Repository.StockRepository;
+import fastfoodbackend.fastfoodbackend.Models.*;
+import fastfoodbackend.fastfoodbackend.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -32,6 +26,9 @@ public class ProductService {
     @Autowired
     private NormRepository normRepository;
 
+    @Autowired
+    private BillsRepository billsRepository;
+
     public List<ProductType> getAllProductType(){
         return productTypeRepository.findAll();
     }
@@ -42,6 +39,21 @@ public class ProductService {
 
             if (companyId > 0 || companyId != null) {
                 predicates.add(cb.equal(root.get("CompanyId"), companyId));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+        };
+    }
+
+
+    public static Specification<Product> getAllProductForSell(Integer companyId) {
+        return (Specification<Product>) (root, criteriaQuery, cb) -> {
+            final List<Predicate> predicates = new ArrayList<>();
+
+            if (companyId > 0 || companyId != null) {
+                predicates.add(cb.equal(root.get("CompanyId"), companyId));
+
+                predicates.add(cb.equal(root.get("IdProductType"), 1));
             }
 
             return cb.and(predicates.toArray(new Predicate[predicates.size()]));
@@ -84,7 +96,21 @@ public class ProductService {
         };
     }
 
-    public static Specification<Norms> getNormsByProductId(Integer productId) {
+    public static Specification<Stock> getStockLimit(Integer companyId, Double quantity) {
+        return (Specification<Stock>) (root, criteriaQuery, cb) -> {
+            final List<Predicate> predicates = new ArrayList<>();
+
+            if (companyId > 0 || companyId != null) {
+                predicates.add(cb.equal(root.get("CompanyId"), companyId));
+
+                predicates.add(cb.lessThanOrEqualTo(root.get("Quantity"), quantity));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+        };
+    }
+
+    public static Specification<Norms> getNormsByProductIdN(Integer productId) {
         return (Specification<Norms>) (root, criteriaQuery, cb) -> {
             final List<Predicate> predicates = new ArrayList<>();
 
@@ -96,12 +122,82 @@ public class ProductService {
         };
     }
 
+    public static Specification<Bills> getBillsForUpdate(Integer companyId, String tables, Integer productId) {
+        return (Specification<Bills>) (root, criteriaQuery, cb) -> {
+            final List<Predicate> predicates = new ArrayList<>();
+
+            if (productId > 0 || productId != null) {
+                predicates.add(cb.equal(root.get("IdProduct"), productId));
+
+                predicates.add(cb.equal(root.get("Tables"), tables));
+
+                predicates.add(cb.equal(root.get("CompanyId"), companyId));
+
+                predicates.add(cb.equal(root.get("IdOrderStatus"), 2));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+        };
+    }
+
+    public static Specification<Bills> getTotalDelivery(Integer companyId, String now) {
+        return (Specification<Bills>) (root, criteriaQuery, cb) -> {
+            final List<Predicate> predicates = new ArrayList<>();
+
+            if (companyId > 0 || companyId != null) {
+                predicates.add(cb.equal(root.get("CompanyId"), companyId));
+
+                predicates.add(cb.equal(root.get("IdOrderType"), 2));
+
+                predicates.add(cb.equal(root.get("DateInsert"), now));
+
+            }
+
+            return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+        };
+    }
+
+    public static Specification<Bills> getTotalBills(Integer companyId, String now) {
+        return (Specification<Bills>) (root, criteriaQuery, cb) -> {
+            final List<Predicate> predicates = new ArrayList<>();
+
+            if (companyId > 0 || companyId != null) {
+                predicates.add(cb.equal(root.get("CompanyId"), companyId));
+
+                predicates.add(cb.equal(root.get("IdOrderType"), 1));
+
+                predicates.add(cb.equal(root.get("DateInsert"), now));
+
+            }
+
+            return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+        };
+    }
+
+    public static Specification<Bills> getAllBills(Integer companyId, String now) {
+        return (Specification<Bills>) (root, criteriaQuery, cb) -> {
+            final List<Predicate> predicates = new ArrayList<>();
+
+            if (companyId > 0 || companyId != null) {
+                predicates.add(cb.equal(root.get("CompanyId"), companyId));
+
+                predicates.add(cb.equal(root.get("DateInsert"), now));
+            }
+            return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+        };
+    }
+
+
+
+
+
+
     public static Specification<Norms> getNormsById(Integer idNorms) {
         return (Specification<Norms>) (root, criteriaQuery, cb) -> {
             final List<Predicate> predicates = new ArrayList<>();
 
             if (idNorms > 0 || idNorms != null) {
-                predicates.add(cb.equal(root.get("I00dNorms"), idNorms));
+                predicates.add(cb.equal(root.get("IdNorms"), idNorms));
             }
 
             return cb.and(predicates.toArray(new Predicate[predicates.size()]));
@@ -153,6 +249,14 @@ public class ProductService {
 
     public List<Product> getAllProduct(Specification<Product> spec){
         return productRepository.findAll(spec);
+    }
+
+    public List<Product> getAllProductForSell(Specification<Product> spec){
+        return productRepository.findAll(spec);
+    }
+
+    public List<Bills> getBillsBySpec(Specification<Bills> spec){
+        return billsRepository.findAll(spec);
     }
 
 

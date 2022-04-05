@@ -102,7 +102,7 @@ public class BillsService {
         };
     }
 
-    public static Specification<Bills> checkForExist(Integer productId, Integer companyId) {
+    public static Specification<Bills> checkForExist(Integer productId, Integer companyId, String tableName) {
         return (Specification<Bills>) (root, criteriaQuery, cb) -> {
             final List<Predicate> predicates = new ArrayList<>();
 
@@ -110,6 +110,8 @@ public class BillsService {
                 predicates.add(cb.equal(root.get("IdProduct"), productId));
 
                 predicates.add(cb.equal(root.get("CompanyId"), companyId));
+
+                predicates.add(cb.equal(root.get("Tables"), tableName));
 
                 predicates.add(cb.equal(root.get("IdOrderStatus"), 2));
 
@@ -133,6 +135,25 @@ public class BillsService {
 
                 predicates.add(cb.lessThanOrEqualTo(root.get("TimeInsert"), shiftEnd));
 
+            }
+            return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+        };
+    }
+
+    public static Specification<Bills> getBillsByProductId(Integer idProduct, String companyId, String dateInsert, String shiftStart, String shiftEnd) {
+        return (Specification<Bills>) (root, criteriaQuery, cb) -> {
+            final List<Predicate> predicates = new ArrayList<>();
+
+            if (companyId != "" && dateInsert != "" && shiftStart != "" && shiftEnd != "") {
+                predicates.add(cb.equal(root.get("DateInsert"), dateInsert));
+
+                predicates.add(cb.equal(root.get("CompanyId"), companyId));
+
+                predicates.add(cb.equal(root.get("idProduct"), idProduct));
+
+                predicates.add(cb.greaterThanOrEqualTo(root.get("TimeInsert"), shiftStart));
+
+                predicates.add(cb.lessThanOrEqualTo(root.get("TimeInsert"), shiftEnd));
             }
             return cb.and(predicates.toArray(new Predicate[predicates.size()]));
         };
@@ -182,7 +203,6 @@ public class BillsService {
     }
 
     public Bills saveBills(Bills bills){
-        bills.setIdBills(bills.getIdBills());
         return billsRepository.saveAndFlush(bills);}
 
     public void deleteBills (Bills bills){

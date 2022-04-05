@@ -1,18 +1,19 @@
 package fastfoodbackend.fastfoodbackend;
 
 import fastfoodbackend.fastfoodbackend.Class.InvoiceItem;
-import fastfoodbackend.fastfoodbackend.Models.Invoice;
-import fastfoodbackend.fastfoodbackend.Models.Product;
-import fastfoodbackend.fastfoodbackend.Models.ProductType;
-import fastfoodbackend.fastfoodbackend.Models.Stock;
+import fastfoodbackend.fastfoodbackend.Models.*;
 import fastfoodbackend.fastfoodbackend.Service.InvoiceService;
 import fastfoodbackend.fastfoodbackend.Service.ProductService;
+import fastfoodbackend.fastfoodbackend.Service.SettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +27,9 @@ public class InvoiceController {
 
     @Autowired
     private InvoiceService invoiceService;
+
+    @Autowired
+    private SettingsService settingsService;
 
     @ResponseStatus(value = HttpStatus.OK)
     @RequestMapping(value="/saveNewInvoice", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
@@ -56,6 +60,34 @@ public class InvoiceController {
 
         return invoiceList.stream().filter(o -> o.getCompanyId() == Integer.parseInt(companyId)).collect(Collectors.toList());
     }
+
+    @ResponseStatus(value = HttpStatus.OK)
+    @RequestMapping(value="/getLimitInvoice", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public List<Invoice> getLimitInvoice(@RequestHeader (value="companyId") String companyId, HttpServletRequest httpServletRequest) throws Exception{
+        Specification<Invoice> invSpec;
+        List<Invoice> invoiceList = null;
+        Specification<Settings> settSpec;
+        List<Settings> settList;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date()); // Using today's date
+
+        try {
+//            settSpec = settingsService.getSettingsByCompanyId(Integer.valueOf(companyId));
+//            settList = settingsService.getInvItemBySpec(settSpec);
+//            c.add(Calendar.DATE, settList.get(0).getLimitDays()); // Adding 5 days
+//
+//            String output = sdf.format(c.getTime());
+//            invSpec = invoiceService.getInvByDate(Integer.valueOf(companyId));
+//            invoiceList = invoiceService.getInvBySpec(invSpec);
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return invoiceList;
+    }
+
 
     @ResponseStatus(value = HttpStatus.OK)
     @RequestMapping(value="/saveInvoiceItem", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")

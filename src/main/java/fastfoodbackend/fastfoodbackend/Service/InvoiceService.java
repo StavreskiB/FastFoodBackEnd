@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -55,6 +56,20 @@ public class InvoiceService {
             return cb.and(predicates.toArray(new Predicate[predicates.size()]));
         };
     }
+
+    public static Specification<Invoice> getInvByDate(Integer companyId) {
+        return (Specification<Invoice>) (root, criteriaQuery, cb) -> {
+            final List<Predicate> predicates = new ArrayList<>();
+
+            if (companyId > 0 || companyId != null) {
+                predicates.add(cb.equal(root.get("CompanyId"), companyId));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+        };
+    }
+
+
 
     public List<InvoiceItem> getInvItemBySpec (Specification<InvoiceItem> spec){
         return invoiceItemRepository.findAll(spec);

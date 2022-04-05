@@ -3,7 +3,6 @@ package fastfoodbackend.fastfoodbackend;
 import fastfoodbackend.fastfoodbackend.Models.*;
 import fastfoodbackend.fastfoodbackend.Service.BillsService;
 import fastfoodbackend.fastfoodbackend.Service.ProductService;
-import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -38,7 +37,7 @@ public class FastFoodController {
                                     @RequestHeader (value="userInsert") String userInsert,
                                     @RequestHeader (value="billsType") String billsType,
                                     @RequestHeader (value="billsStatus") String billsStatus, HttpServletRequest httpServletRequest) throws Exception{
-        Boolean flag = false;
+        Boolean flag = true;
         Bills bills = new Bills();
         Specification<Product> prodSpec;
         List<Product> prodList;
@@ -46,6 +45,10 @@ public class FastFoodController {
         List<OrderType> otList;
         Specification<OrderStatus> osSpec;
         List<OrderStatus> osList;
+        Specification<Stock> stockSpec;
+        List<Stock> stockList;
+        Specification<Norms> normsSpec;
+        List<Norms> normsList;
         LocalDate localDate = LocalDate.now();
         LocalTime localTime = LocalTime.now();
         try {
@@ -60,21 +63,50 @@ public class FastFoodController {
             otSpec = billsService.getOtByNameSpec(billsType);
             otList = billsService.getOtByName(otSpec);
 
-            bills.setTables(table);
-            bills.setQuantity(Double.valueOf(quantity));
-            bills.setAddons(addons);
-            bills.setAddress(description);
-            bills.setCompanyId(Integer.parseInt(companyId));
-            bills.setEmployee(userInsert);
-            bills.setIdProduct(prodList.get(0));
-            bills.setIdOrderStatus(osList.get(0));
-            bills.setIdOrderType(otList.get(0));
-            bills.setTimeInser(String.valueOf(localTime));
-            bills.setDateInsert(String.valueOf(localDate));
 
-            billsService.saveBills(bills);
+           // billsSpec = productService.getBillsForUpdate(Integer.parseInt(companyId), table, prodList.get(0).getIdProduct());
+           // billsList = billsService.getBillsBySpec(billsSpec);
+
+//            if(billsList.size() > 0) {
+//                billsList.get(0).setQuantity(billsList.get(0).getQuantity() + Double.valueOf(quantity));
+//                billsService.saveBills(billsList.get(0));
+//            } else {
+                bills = new Bills();
+                bills.setTables(table);
+                bills.setQuantity(Double.valueOf(quantity));
+                bills.setAddons(addons);
+                bills.setAddress(description);
+                bills.setCompanyId(Integer.parseInt(companyId));
+                bills.setEmployee(userInsert);
+                bills.setIdProduct(prodList.get(0));
+                bills.setIdOrderStatus(osList.get(0));
+                bills.setIdOrderType(otList.get(0));
+                bills.setTimeInser(String.valueOf(localTime));
+                bills.setDateInsert(String.valueOf(localDate));
+                billsService.saveBills(bills);
+//            }
+
+            stockSpec = productService.getStockByProductId(prodList.get(0).getIdProduct());
+            stockList = productService.getAllStock(stockSpec);
+            stockList.get(0).setQuantity(stockList.get(0).getQuantity() - Double.valueOf(quantity));
+            productService.saveNewStock(stockList.get(0));
+
+            normsSpec = productService.getNormsByProductIdN(prodList.get(0).getIdProduct());
+            normsList = productService.getNormsBySpec(normsSpec);
+
+
+            for(int i = 0; i < normsList.size(); i++){
+               stockList.clear();
+               stockSpec = productService.getStockByProductId(normsList.get(i).getIdProduct().getIdProduct());
+               stockList = productService.getAllStock(stockSpec);
+
+               stockList.get(0).setQuantity(stockList.get(0).getQuantity() - (Double.valueOf(quantity) * normsList.get(i).getQuantity()));
+               productService.saveNewStock(stockList.get(0));
+            }
+
 
         } catch (Exception e){
+            flag = false;
             e.printStackTrace();
         }
         return flag;
@@ -131,16 +163,74 @@ public class FastFoodController {
     }
 
 
+//    @ResponseStatus(value = HttpStatus.OK)
+//    @RequestMapping(value="/convertToBills", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+//    public Boolean convertToBills(@RequestHeader (value="table") String TableName,
+//                                  @RequestHeader (value="companyId") String companyId,
+//                              HttpServletRequest httpServletRequest) throws Exception{
+//
+//        Specification<Bills> billsSpec;
+//        List<Bills> billsList = null;
+//        Specification<Bills> checkIfSpec;
+//        List<Bills> checkIfList = null;
+//        Specification<Bills> delSpec;
+//        OrderStatus orderStatus = new OrderStatus();
+//        Bills bills = new Bills();
+//        Boolean flag = false;
+//        try {
+//
+//            orderStatus.setIdOrderStatus(2);
+//            orderStatus.setName("Smetka");
+//
+//            billsSpec = billsService.convertMarkToBills(TableName, Integer.parseInt(companyId));
+//            billsList = billsService.getBillsBySpec(billsSpec);
+//
+//
+//            for(int i = 0; i < billsList.size(); i++) {
+//                billsList.get(i).setIdOrderStatus(orderStatus);
+//                billsService.saveBills(billsList.get(i));
+//            }
+////            for(int i = 0; i < billsList.size(); i++){
+////
+//////
+////                checkIfSpec = billsService.checkForExist(billsList.get(i).getIdProduct().getIdProduct(), Integer.parseInt(companyId), TableName);
+////                checkIfList = billsService.getBillsBySpec(checkIfSpec);
+//
+//                //if(checkIfList.size() > 0){
+//
+//                    //billsService.deleteBillsByID(checkIfList.get(0));
+////                    billsList.get(i).setIdOrderStatus(orderStatus);
+////                    checkIfList.get(0).setQuantity(checkIfList.get(0).getQuantity() + billsList.get(i).getQuantity());
+////                    checkIfList.get(0).setIdOrderStatus(orderStatus);
+////                    checkIfList.get(0).setIdBills(checkIfList.get(0).getIdBills());
+//
+//                //    billsService.saveBills(checkIfList.get(0));
+////                } else {
+////                    billsList.get(i).setIdOrderStatus(orderStatus);
+////
+////                    billsService.saveBills(billsList.get(i));
+////                }
+//
+//
+//            flag = true;
+//        } catch (Exception e){
+//            e.printStackTrace();
+//        }
+//        return flag;
+//    }
+
+
     @ResponseStatus(value = HttpStatus.OK)
     @RequestMapping(value="/convertToBills", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public Boolean convertToBills(@RequestHeader (value="table") String TableName,
                                   @RequestHeader (value="companyId") String companyId,
-                              HttpServletRequest httpServletRequest) throws Exception{
+                                  HttpServletRequest httpServletRequest) throws Exception{
 
         Specification<Bills> billsSpec;
         List<Bills> billsList = null;
         Specification<Bills> checkIfSpec;
         List<Bills> checkIfList = null;
+        Specification<Bills> delSpec;
         OrderStatus orderStatus = new OrderStatus();
         Bills bills = new Bills();
         Boolean flag = false;
@@ -150,39 +240,48 @@ public class FastFoodController {
             orderStatus.setName("Smetka");
 
             billsSpec = billsService.convertMarkToBills(TableName, Integer.parseInt(companyId));
-
             billsList = billsService.getBillsBySpec(billsSpec);
 
-            for(int i = 0; i < billsList.size(); i++){
 
-                billsList.get(i).setIdOrderStatus(orderStatus);
-
-                checkIfSpec = billsService.checkForExist(billsList.get(i).getIdProduct().getIdProduct(), Integer.parseInt(companyId));
-                checkIfList = billsService.getBillsBySpec(checkIfSpec);
-
-                if(checkIfList.size() > 0){
-//                    bills.setIdBills(checkIfList.get(0).getIdBills());
-//                    bills.setIdOrderStatus(checkIfList.get(0).getIdOrderStatus());
-//                    bills.setQuantity(checkIfList.get(0).getQuantity() + billsList.get(i).getQuantity());
-//                    bills.setTimeInser(checkIfList.get(0).getTimeInser());
-//                    bills.setTables(checkIfList.get(0).getTables());
-//                    bills.setIdProduct(checkIfList.get(0).getIdProduct());
-//                    bills.setEmployee(checkIfList.get(0).getEmployee());
-//                    bills.setCompanyId(checkIfList.get(0).getCompanyId());
-//                    bills.setAddons(checkIfList.get(0).getAddons());
-//                    bills.setAddress(checkIfList.get(0).getAddress());
-//                    bills.setDateInsert(checkIfList.get(0).getDateInsert());
-//                    bills.setIdOrderType(checkIfList.get(0).getIdOrderType());
-
-                    checkIfList.get(0).setQuantity(checkIfList.get(0).getQuantity() + billsList.get(i).getQuantity());
-                    checkIfList.get(0).setIdOrderStatus(orderStatus);
-                    checkIfList.get(0).setIdBills(checkIfList.get(0).getIdBills());
-
-                    billsService.saveBills(checkIfList.get(0));
-                } else {
+            for(int i = 0; i < billsList.size(); i++) {
+//                checkIfSpec = billsService.checkForExist(billsList.get(i).getIdProduct().getIdProduct(), Integer.parseInt(companyId), TableName);
+//                checkIfList = billsService.getBillsBySpec(checkIfSpec);
+//
+//                if(checkIfList.size() > 0){
+//                    checkIfList.get(i).setIdOrderStatus(orderStatus);
+//                    checkIfList.get(i).setQuantity(billsList.get(i).getQuantity() + checkIfList.get(i).getQuantity());
+//                    billsService.saveBills(checkIfList.get(i));
+//
+//                } else {
+//                    billsList.get(i).setIdOrderStatus(orderStatus);
+                    billsList.get(i).setIdOrderStatus(orderStatus);
                     billsService.saveBills(billsList.get(i));
-                }
+            //
+                // }
+
+
             }
+//            for(int i = 0; i < billsList.size(); i++){
+//
+////
+//                checkIfSpec = billsService.checkForExist(billsList.get(i).getIdProduct().getIdProduct(), Integer.parseInt(companyId), TableName);
+//                checkIfList = billsService.getBillsBySpec(checkIfSpec);
+
+            //if(checkIfList.size() > 0){
+
+            //billsService.deleteBillsByID(checkIfList.get(0));
+//                    billsList.get(i).setIdOrderStatus(orderStatus);
+//                    checkIfList.get(0).setQuantity(checkIfList.get(0).getQuantity() + billsList.get(i).getQuantity());
+//                    checkIfList.get(0).setIdOrderStatus(orderStatus);
+//                    checkIfList.get(0).setIdBills(checkIfList.get(0).getIdBills());
+
+            //    billsService.saveBills(checkIfList.get(0));
+//                } else {
+//                    billsList.get(i).setIdOrderStatus(orderStatus);
+//
+//                    billsService.saveBills(billsList.get(i));
+//                }
+
 
             flag = true;
         } catch (Exception e){
@@ -206,7 +305,6 @@ public class FastFoodController {
             billsSpec = billsService.getBillsItem(TableName, Integer.parseInt(companyId));
 
             billsList = billsService.getBillsBySpec(billsSpec);
-
 
         } catch (Exception e){
 

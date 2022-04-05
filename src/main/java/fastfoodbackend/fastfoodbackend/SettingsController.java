@@ -45,11 +45,16 @@ public class SettingsController {
             settSpec = settingsService.getSettingsByCompanyId(settings.getCompanyId());
             settingsList = settingsService.getInvItemBySpec(settSpec);
 
-            settingsList.get(0).setLimitGr(settings.getLimitGr());
-            settingsList.get(0).setLimitPiece(settings.getLimitPiece());
+            if(settingsList.size() > 0) {
+                settingsList.get(0).setLimitDays(settings.getLimitDays());
+                settingsList.get(0).setLimitPiece(settings.getLimitPiece());
+                settingsService.saveSettings(settingsList.get(0));
+            } else {
+                settings.setFirstShiftStart(null);
+                settings.setSecondShiftStart(null);
+                settingsService.saveSettings(settings);
+            }
 
-
-            settingsService.saveSettings(settingsList.get(0));
 
             flag = true;
 
